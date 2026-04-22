@@ -50,8 +50,8 @@ export const Route = createRootRoute({
       { name: "description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
       { property: "og:description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
       { name: "twitter:description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776850361180-Screenshot.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776850361180-Screenshot.webp" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776851273391-Screenshot_2026-04-22_162937.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776851273391-Screenshot_2026-04-22_162937.webp" },
     ],
     links: [
       {
