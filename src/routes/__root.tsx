@@ -38,7 +38,7 @@ export const Route = createRootRoute({
           "Platform Web3 franchise UMKM kuliner berbasis blockchain. Kelola Cimol Stick, Sosis Crispy, Tahu Crispy & jajanan street food secara transparan dan otomatis.",
       },
       { name: "author", content: "ENGGAL GROUP" },
-      { property: "og:title", content: "ENGGAL GROUP — Web3 Franchise Platform" },
+      { property: "og:title", content: "ENGGAL GROUP — Web3 Franchise Platform Kuliner UMKM" },
       {
         property: "og:description",
         content:
@@ -46,6 +46,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ENGGAL GROUP — Web3 Franchise Platform Kuliner UMKM" },
+      { name: "description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
+      { property: "og:description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
+      { name: "twitter:description", content: "ENGGAL GROUP is a Web3 platform for managing culinary street food franchises transparently and efficiently." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776850361180-Screenshot.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KGX4gvepOSh5JN4RZSVFEbFAG082/social-images/social-1776850361180-Screenshot.webp" },
     ],
     links: [
       {
