@@ -1,16 +1,11 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { useAuth, type AppRole } from "@/hooks/use-auth";
+import { useEffect, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, ShieldAlert } from "lucide-react";
+import { useAuth, type AppRole } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_authenticated")({
-  component: AuthenticatedLayout,
-});
-
-function AuthenticatedLayout() {
-  const { user, loading, role } = useAuth();
+export function RequireAuth({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,17 +24,10 @@ function AuthenticatedLayout() {
 
   if (!user) return null;
 
-  // role context available via useAuth() in children; pass through
-  return <Outlet context={{ role }} />;
+  return <>{children}</>;
 }
 
-export function RoleGate({
-  allow,
-  children,
-}: {
-  allow: AppRole[];
-  children: React.ReactNode;
-}) {
+export function RoleGate({ allow, children }: { allow: AppRole[]; children: ReactNode }) {
   const { role, loading } = useAuth();
 
   if (loading) {
@@ -58,7 +46,7 @@ export function RoleGate({
         </div>
         <h2 className="font-display text-2xl font-bold text-foreground">Akses Ditolak</h2>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          Halaman ini hanya bisa diakses oleh role:{" "}
+          Halaman ini hanya untuk role:{" "}
           <span className="font-semibold text-gold">{allow.join(", ")}</span>. Role Anda saat ini:{" "}
           <span className="font-semibold capitalize text-foreground">{role ?? "tidak ada"}</span>.
         </p>
