@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { RequireAuth, RoleGate } from "@/components/AuthGuards";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBranches, fetchSales, formatRupiah, timeAgo } from "@/lib/queries";
 
@@ -29,8 +30,18 @@ export const Route = createFileRoute("/mitra")({
       },
     ],
   }),
-  component: MitraPage,
+  component: MitraPageGuarded,
 });
+
+function MitraPageGuarded() {
+  return (
+    <RequireAuth>
+      <RoleGate allow={["owner", "mitra"]}>
+        <MitraPage />
+      </RoleGate>
+    </RequireAuth>
+  );
+}
 
 const PRODUCTS = [
   { name: "Cimol Stick Kentang", price: 10000 },

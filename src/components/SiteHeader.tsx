@@ -1,8 +1,19 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, Wallet } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, Menu, User as UserIcon, Wallet } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 const navItems = [
   { to: "/", label: "Beranda" },
@@ -15,6 +26,20 @@ const navItems = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Berhasil keluar");
+    void navigate({ to: "/" });
+  };
+
+  const roleBadge = role ? (
+    <Badge variant="outline" className="border-gold/40 text-gold capitalize">
+      {role}
+    </Badge>
+  ) : null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl">
@@ -48,10 +73,39 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Button variant="gold" size="default">
-            <Wallet className="size-4" />
-            Connect Wallet
-          </Button>
+          {user ? (
+            <>
+              {roleBadge}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <UserIcon className="size-4" />
+                    <span className="max-w-[140px] truncate">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Akun saya</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => void navigate({ to: "/dashboard" })}>
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="size-4" /> Keluar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth">Masuk</Link>
+              </Button>
+              <Button variant="gold" size="default">
+                <Wallet className="size-4" />
+                Connect Wallet
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -82,10 +136,23 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Button variant="gold" className="mt-2 w-full">
-            <Wallet className="size-4" />
-            Connect Wallet
-          </Button>
+          {user ? (
+            <>
+              <div className="mt-2 flex items-center justify-between rounded-md border border-border/40 px-3 py-2">
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                {roleBadge}
+              </div>
+              <Button variant="outline" className="mt-2 w-full" onClick={handleSignOut}>
+                <LogOut className="size-4" /> Keluar
+              </Button>
+            </>
+          ) : (
+            <Button variant="gold" className="mt-2 w-full" asChild>
+              <Link to="/auth" onClick={() => setOpen(false)}>
+                Masuk / Daftar
+              </Link>
+            </Button>
+          )}
         </nav>
       </div>
     </header>
