@@ -8,9 +8,10 @@ const navItems = [
   { to: "/", label: "Beranda" },
   { to: "/franchise", label: "Franchise" },
   { to: "/dashboard", label: "Dashboard" },
+  { to: "/mitra", label: "Mitra" },
+  { to: "/cabang", label: "Cabang" },
   { to: "/investor", label: "Investor" },
-  { to: "/about", label: "Tentang" },
-];
+] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);

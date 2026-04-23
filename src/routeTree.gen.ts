@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MitraRouteImport } from './routes/mitra'
 import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as FranchiseRouteImport } from './routes/franchise'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CabangRouteImport } from './routes/cabang'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const MitraRoute = MitraRouteImport.update({
+  id: '/mitra',
+  path: '/mitra',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvestorRoute = InvestorRouteImport.update({
   id: '/investor',
   path: '/investor',
@@ -28,6 +35,11 @@ const FranchiseRoute = FranchiseRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CabangRoute = CabangRouteImport.update({
+  id: '/cabang',
+  path: '/cabang',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -44,43 +56,80 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabang': typeof CabangRoute
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/mitra': typeof MitraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabang': typeof CabangRoute
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/mitra': typeof MitraRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabang': typeof CabangRoute
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/mitra': typeof MitraRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dashboard' | '/franchise' | '/investor'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/cabang'
+    | '/dashboard'
+    | '/franchise'
+    | '/investor'
+    | '/mitra'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dashboard' | '/franchise' | '/investor'
-  id: '__root__' | '/' | '/about' | '/dashboard' | '/franchise' | '/investor'
+  to:
+    | '/'
+    | '/about'
+    | '/cabang'
+    | '/dashboard'
+    | '/franchise'
+    | '/investor'
+    | '/mitra'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/cabang'
+    | '/dashboard'
+    | '/franchise'
+    | '/investor'
+    | '/mitra'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CabangRoute: typeof CabangRoute
   DashboardRoute: typeof DashboardRoute
   FranchiseRoute: typeof FranchiseRoute
   InvestorRoute: typeof InvestorRoute
+  MitraRoute: typeof MitraRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mitra': {
+      id: '/mitra'
+      path: '/mitra'
+      fullPath: '/mitra'
+      preLoaderRoute: typeof MitraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/investor': {
       id: '/investor'
       path: '/investor'
@@ -100,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cabang': {
+      id: '/cabang'
+      path: '/cabang'
+      fullPath: '/cabang'
+      preLoaderRoute: typeof CabangRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -122,9 +178,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CabangRoute: CabangRoute,
   DashboardRoute: DashboardRoute,
   FranchiseRoute: FranchiseRoute,
   InvestorRoute: InvestorRoute,
+  MitraRoute: MitraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
