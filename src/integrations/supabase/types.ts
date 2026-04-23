@@ -14,7 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      branches: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          manager_name: string | null
+          name: string
+          opened_at: string
+          status: string
+          updated_at: string
+          wallet_address: string | null
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          manager_name?: string | null
+          name: string
+          opened_at?: string
+          status?: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          manager_name?: string | null
+          name?: string
+          opened_at?: string
+          status?: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      royalty_transactions: {
+        Row: {
+          amount: number
+          branch_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          status: string
+          tx_hash: string
+          tx_type: string
+        }
+        Insert: {
+          amount: number
+          branch_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: string
+          tx_hash: string
+          tx_type: string
+        }
+        Update: {
+          amount?: number
+          branch_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: string
+          tx_hash?: string
+          tx_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "royalty_transactions_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          product_name: string
+          quantity: number
+          sale_date: string
+          total_amount: number | null
+          unit_price: number
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          product_name: string
+          quantity: number
+          sale_date?: string
+          total_amount?: number | null
+          unit_price: number
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          product_name?: string
+          quantity?: number
+          sale_date?: string
+          total_amount?: number | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_items: {
+        Row: {
+          branch_id: string | null
+          current_qty: number
+          id: string
+          item_name: string
+          max_qty: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          current_qty?: number
+          id?: string
+          item_name: string
+          max_qty?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          current_qty?: number
+          id?: string
+          item_name?: string
+          max_qty?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_items_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
