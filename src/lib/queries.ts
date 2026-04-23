@@ -28,6 +28,7 @@ export type StockItem = {
   item_name: string;
   current_qty: number;
   max_qty: number;
+  min_qty: number;
   unit: string;
 };
 
@@ -39,6 +40,78 @@ export type RoyaltyTx = {
   amount: number;
   currency: string;
   status: string;
+  created_at: string;
+};
+
+export type Supplier = {
+  id: string;
+  name: string;
+  contact: string | null;
+  address: string | null;
+  wallet_address: string | null;
+  created_at: string;
+};
+
+export type StockMovement = {
+  id: string;
+  item_name: string;
+  quantity: number;
+  unit: string;
+  from_location: string;
+  to_location: string;
+  supplier_id: string | null;
+  branch_id: string | null;
+  tx_hash: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export type Voucher = {
+  id: string;
+  title: string;
+  description: string | null;
+  cost_points: number;
+  discount_amount: number;
+  active: boolean;
+};
+
+export type LoyaltyAccount = {
+  user_id: string;
+  balance: number;
+  total_earned: number;
+  total_redeemed: number;
+};
+
+export type LoyaltyTx = {
+  id: string;
+  user_id: string;
+  amount: number;
+  tx_type: "earn" | "redeem";
+  reference: string | null;
+  created_at: string;
+};
+
+export type PaymentProof = {
+  id: string;
+  user_id: string;
+  branch_id: string | null;
+  payment_type: "franchise_fee" | "royalty" | "supply";
+  amount: number;
+  method: "transfer" | "qris" | "crypto";
+  proof_url: string | null;
+  reference_note: string | null;
+  status: "pending" | "verified" | "rejected";
+  created_at: string;
+};
+
+export type Notification = {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string | null;
+  type: "info" | "success" | "warning" | "error";
+  read: boolean;
+  link: string | null;
   created_at: string;
 };
 
@@ -65,7 +138,7 @@ export async function fetchStock(): Promise<StockItem[]> {
   const { data, error } = await supabase
     .from("stock_items")
     .select("*")
-    .is("branch_id", null);
+    .order("item_name");
   if (error) throw error;
   return (data ?? []) as StockItem[];
 }
@@ -75,9 +148,79 @@ export async function fetchRoyaltyTx(): Promise<RoyaltyTx[]> {
     .from("royalty_transactions")
     .select("*")
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(50);
   if (error) throw error;
   return (data ?? []) as RoyaltyTx[];
+}
+
+export async function fetchSuppliers(): Promise<Supplier[]> {
+  const { data, error } = await supabase
+    .from("suppliers")
+    .select("*")
+    .order("name");
+  if (error) throw error;
+  return (data ?? []) as Supplier[];
+}
+
+export async function fetchStockMovements(): Promise<StockMovement[]> {
+  const { data, error } = await supabase
+    .from("stock_movements")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return (data ?? []) as StockMovement[];
+}
+
+export async function fetchVouchers(): Promise<Voucher[]> {
+  const { data, error } = await supabase
+    .from("vouchers")
+    .select("*")
+    .eq("active", true)
+    .order("cost_points");
+  if (error) throw error;
+  return (data ?? []) as Voucher[];
+}
+
+export async function fetchMyLoyalty(userId: string): Promise<LoyaltyAccount | null> {
+  const { data, error } = await supabase
+    .from("loyalty_accounts")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as LoyaltyAccount | null) ?? null;
+}
+
+export async function fetchMyLoyaltyTx(userId: string): Promise<LoyaltyTx[]> {
+  const { data, error } = await supabase
+    .from("loyalty_transactions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  return (data ?? []) as LoyaltyTx[];
+}
+
+export async function fetchPayments(): Promise<PaymentProof[]> {
+  const { data, error } = await supabase
+    .from("payment_proofs")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as PaymentProof[];
+}
+
+export async function fetchNotifications(userId: string): Promise<Notification[]> {
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+  if (error) throw error;
+  return (data ?? []) as Notification[];
 }
 
 // helpers
@@ -86,6 +229,14 @@ export function formatRupiah(n: number): string {
   if (n >= 1_000_000) return `Rp ${(n / 1_000_000).toFixed(1)} jt`;
   if (n >= 1_000) return `Rp ${(n / 1_000).toFixed(0)} rb`;
   return `Rp ${n.toFixed(0)}`;
+}
+
+export function formatRupiahFull(n: number): string {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(n);
 }
 
 export function timeAgo(iso: string): string {
@@ -97,4 +248,11 @@ export function timeAgo(iso: string): string {
   if (h < 24) return `${h}j`;
   const d = Math.floor(h / 24);
   return `${d}h`;
+}
+
+export function mockTxHash(): string {
+  const chars = "0123456789abcdef";
+  let s = "0x";
+  for (let i = 0; i < 12; i++) s += chars[Math.floor(Math.random() * 16)];
+  return s + "..." + Math.random().toString(16).slice(2, 6);
 }
