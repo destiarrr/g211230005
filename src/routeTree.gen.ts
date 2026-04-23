@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StokRouteImport } from './routes/stok'
 import { Route as MitraRouteImport } from './routes/mitra'
+import { Route as LoyaltyRouteImport } from './routes/loyalty'
 import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as FranchiseRouteImport } from './routes/franchise'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -18,9 +20,19 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const StokRoute = StokRouteImport.update({
+  id: '/stok',
+  path: '/stok',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MitraRoute = MitraRouteImport.update({
   id: '/mitra',
   path: '/mitra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoyaltyRoute = LoyaltyRouteImport.update({
+  id: '/loyalty',
+  path: '/loyalty',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvestorRoute = InvestorRouteImport.update({
@@ -67,7 +79,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/stok': typeof StokRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,7 +91,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/stok': typeof StokRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,7 +104,9 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/stok': typeof StokRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,7 +118,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/loyalty'
     | '/mitra'
+    | '/stok'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -110,7 +130,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/loyalty'
     | '/mitra'
+    | '/stok'
   id:
     | '__root__'
     | '/'
@@ -120,7 +142,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/loyalty'
     | '/mitra'
+    | '/stok'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,16 +155,32 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FranchiseRoute: typeof FranchiseRoute
   InvestorRoute: typeof InvestorRoute
+  LoyaltyRoute: typeof LoyaltyRoute
   MitraRoute: typeof MitraRoute
+  StokRoute: typeof StokRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stok': {
+      id: '/stok'
+      path: '/stok'
+      fullPath: '/stok'
+      preLoaderRoute: typeof StokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mitra': {
       id: '/mitra'
       path: '/mitra'
       fullPath: '/mitra'
       preLoaderRoute: typeof MitraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loyalty': {
+      id: '/loyalty'
+      path: '/loyalty'
+      fullPath: '/loyalty'
+      preLoaderRoute: typeof LoyaltyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/investor': {
@@ -203,17 +243,10 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FranchiseRoute: FranchiseRoute,
   InvestorRoute: InvestorRoute,
+  LoyaltyRoute: LoyaltyRoute,
   MitraRoute: MitraRoute,
+  StokRoute: StokRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
