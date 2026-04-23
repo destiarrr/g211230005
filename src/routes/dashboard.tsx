@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { RequireAuth } from "@/components/AuthGuards";
 import {
   fetchBranches,
   fetchSales,
@@ -48,8 +49,16 @@ export const Route = createFileRoute("/dashboard")({
       },
     ],
   }),
-  component: DashboardPage,
+  component: DashboardPageGuarded,
 });
+
+function DashboardPageGuarded() {
+  return (
+    <RequireAuth>
+      <DashboardPage />
+    </RequireAuth>
+  );
+}
 
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 

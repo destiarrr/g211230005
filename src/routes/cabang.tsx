@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { RequireAuth, RoleGate } from "@/components/AuthGuards";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBranches } from "@/lib/queries";
 
@@ -21,8 +22,18 @@ export const Route = createFileRoute("/cabang")({
       },
     ],
   }),
-  component: BranchPage,
+  component: BranchPageGuarded,
 });
+
+function BranchPageGuarded() {
+  return (
+    <RequireAuth>
+      <RoleGate allow={["owner"]}>
+        <BranchPage />
+      </RoleGate>
+    </RequireAuth>
+  );
+}
 
 function randomWallet() {
   const chars = "0123456789abcdef";
