@@ -112,6 +112,16 @@ function DashboardPage() {
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
 
+  // Royalty status filter
+  type RoyaltyStatus = "all" | "pending" | "verified" | "paid";
+  const [royaltyStatus, setRoyaltyStatus] = useState<RoyaltyStatus>("all");
+  const ROYALTY_STATUSES: { value: RoyaltyStatus; label: string; tone: string }[] = [
+    { value: "all", label: "Semua", tone: "bg-muted text-foreground" },
+    { value: "pending", label: "Pending", tone: "bg-warning/15 text-warning" },
+    { value: "verified", label: "Verified", tone: "bg-info/15 text-info" },
+    { value: "paid", label: "Paid", tone: "bg-success/15 text-success" },
+  ];
+
   const { fromDate, toDate } = useMemo(() => {
     const from = startOfPeriod(period, customFrom);
     const to = period === "custom" && customTo ? new Date(customTo + "T23:59:59") : new Date();
@@ -131,9 +141,12 @@ function DashboardPage() {
     [sales, fromDate, toDate],
   );
   const filteredRoyalty = useMemo(
-    () => royalty.filter((r) => inRange(r.created_at)),
+    () =>
+      royalty
+        .filter((r) => inRange(r.created_at))
+        .filter((r) => royaltyStatus === "all" || r.status === royaltyStatus),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [royalty, fromDate, toDate],
+    [royalty, fromDate, toDate, royaltyStatus],
   );
 
   const periodOmzet = filteredSales.reduce((a, s) => a + Number(s.total_amount), 0);
@@ -197,11 +210,12 @@ function DashboardPage() {
       .filter((r) => r.tx_type === "royalty")
       .reduce((a, r) => a + Number(r.amount), 0);
     rows.push(["", "", "", "", "TOTAL ROYALTI", Number(totalMatic.toFixed(4)), "MATIC"]);
-    const filename = `laporan-royalti-${period}-${today}`;
+    const statusLabel = royaltyStatus === "all" ? "Semua Status" : `Status: ${royaltyStatus}`;
+    const filename = `laporan-royalti-${royaltyStatus}-${period}-${today}`;
     if (kind === "pdf") {
       exportToPDF({
         title: "Laporan Royalti On-Chain",
-        subtitle: `${periodSubtitle} • ${filteredRoyalty.length} tx • ${totalMatic.toFixed(4)} MATIC`,
+        subtitle: `${periodSubtitle} • ${statusLabel} • ${filteredRoyalty.length} tx • ${totalMatic.toFixed(4)} MATIC`,
         headers, rows, filename: `${filename}.pdf`,
       });
     } else {
@@ -309,6 +323,33 @@ function DashboardPage() {
                     />
                   </div>
                 )}
+                <div className="flex flex-col gap-1">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Status Royalti (untuk export)
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {ROYALTY_STATUSES.map((s) => {
+                      const count =
+                        s.value === "all"
+                          ? royalty.filter((r) => inRange(r.created_at)).length
+                          : royalty.filter((r) => inRange(r.created_at) && r.status === s.value).length;
+                      return (
+                        <button
+                          key={s.value}
+                          type="button"
+                          onClick={() => setRoyaltyStatus(s.value)}
+                          className={`rounded-full border px-2.5 py-1 text-[11px] font-medium capitalize transition ${
+                            royaltyStatus === s.value
+                              ? "border-gold bg-gold text-gold-foreground"
+                              : `border-border ${s.tone} hover:border-gold/40`
+                          }`}
+                        >
+                          {s.label} <span className="opacity-70">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-4 text-xs">
                   <div>
                     <span className="text-muted-foreground">Penjualan: </span>
@@ -317,7 +358,7 @@ function DashboardPage() {
                     <span className="font-semibold text-gold">{formatRupiah(periodOmzet)}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Royalti: </span>
+                    <span className="text-muted-foreground">Royalti ({royaltyStatus}): </span>
                     <span className="font-semibold">{filteredRoyalty.length} tx</span>
                     <span className="text-muted-foreground"> • </span>
                     <span className="font-semibold text-gold">{periodRoyalty.toFixed(4)} MATIC</span>
@@ -559,23 +600,38 @@ function DashboardPage() {
                 {royalty.length === 0 && !loading && (
                   <p className="text-sm text-muted-foreground">Belum ada transaksi.</p>
                 )}
-                {royalty.slice(0, 6).map((t) => (
-                  <div
-                    key={t.id}
-                    className="flex items-center justify-between rounded-lg border border-border/50 bg-background/30 p-4"
-                  >
-                    <div>
-                      <div className="text-sm font-medium capitalize">{t.tx_type.replace("_", " ")}</div>
-                      <div className="font-mono text-xs text-muted-foreground">{t.tx_hash}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-gold">
-                        +{Number(t.amount).toFixed(4)} {t.currency}
+                {royalty.slice(0, 6).map((t) => {
+                  const tone =
+                    t.status === "paid"
+                      ? "bg-success/15 text-success border-success/30"
+                      : t.status === "verified"
+                        ? "bg-info/15 text-info border-info/30"
+                        : t.status === "pending"
+                          ? "bg-warning/15 text-warning border-warning/30"
+                          : "bg-muted text-muted-foreground border-border";
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between rounded-lg border border-border/50 bg-background/30 p-4"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium capitalize">{t.tx_type.replace("_", " ")}</div>
+                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase ${tone}`}>
+                            {t.status}
+                          </span>
+                        </div>
+                        <div className="font-mono text-xs text-muted-foreground truncate">{t.tx_hash}</div>
                       </div>
-                      <div className="text-xs text-muted-foreground">{timeAgo(t.created_at)} lalu</div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-gold">
+                          +{Number(t.amount).toFixed(4)} {t.currency}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{timeAgo(t.created_at)} lalu</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
