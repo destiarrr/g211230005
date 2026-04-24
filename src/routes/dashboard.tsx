@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import {
   Activity,
   ArrowDownRight,
   ArrowUpRight,
+  CalendarRange,
   Coins,
   Crown,
+  FileSpreadsheet,
   FileText,
   Loader2,
   MapPin,
