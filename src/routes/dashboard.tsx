@@ -141,9 +141,12 @@ function DashboardPage() {
     [sales, fromDate, toDate],
   );
   const filteredRoyalty = useMemo(
-    () => royalty.filter((r) => inRange(r.created_at)),
+    () =>
+      royalty
+        .filter((r) => inRange(r.created_at))
+        .filter((r) => royaltyStatus === "all" || r.status === royaltyStatus),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [royalty, fromDate, toDate],
+    [royalty, fromDate, toDate, royaltyStatus],
   );
 
   const periodOmzet = filteredSales.reduce((a, s) => a + Number(s.total_amount), 0);
