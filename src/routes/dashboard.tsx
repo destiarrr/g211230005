@@ -35,8 +35,10 @@ import {
   fetchStock,
   fetchRoyaltyTx,
   formatRupiah,
+  formatRupiahFull,
   timeAgo,
 } from "@/lib/queries";
+import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -62,30 +64,6 @@ function DashboardPageGuarded() {
 
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 
-function exportToCSV(filename: string, rows: Array<Record<string, unknown>>) {
-  if (rows.length === 0) return;
-  const headers = Object.keys(rows[0]);
-  const csv = [
-    headers.join(","),
-    ...rows.map((r) =>
-      headers
-        .map((h) => {
-          const v = r[h];
-          if (v === null || v === undefined) return "";
-          const s = String(v).replace(/"/g, '""');
-          return /[",\n]/.test(s) ? `"${s}"` : s;
-        })
-        .join(","),
-    ),
-  ].join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 function DashboardPage() {
   const branchesQ = useQuery({ queryKey: ["branches"], queryFn: fetchBranches });
