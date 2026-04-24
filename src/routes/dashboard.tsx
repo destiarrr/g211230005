@@ -260,87 +260,105 @@ function DashboardPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button
-                variant="glass"
-                size="default"
-                disabled={sales.length === 0}
-                onClick={() => {
-                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
-                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
-                  const rows = sales.map((s) => [
-                    s.sale_date,
-                    branchName(s.branch_id),
-                    s.product_name,
-                    s.quantity,
-                    Number(s.unit_price),
-                    Number(s.total_amount),
-                  ]);
-                  exportToPDF({
-                    title: "Laporan Penjualan",
-                    subtitle: `Total ${sales.length} transaksi • ${formatRupiahFull(sales.reduce((a, s) => a + Number(s.total_amount), 0))}`,
-                    headers,
-                    rows,
-                    filename: `laporan-penjualan-${today}.pdf`,
-                  });
-                }}
-              >
-                <FileText className="size-4" /> PDF Penjualan
-              </Button>
-              <Button
-                variant="glass"
-                size="default"
-                disabled={sales.length === 0}
-                onClick={() => {
-                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
-                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
-                  const rows = sales.map((s) => [
-                    s.sale_date,
-                    branchName(s.branch_id),
-                    s.product_name,
-                    s.quantity,
-                    Number(s.unit_price),
-                    Number(s.total_amount),
-                  ]);
-                  exportToExcel({
-                    sheetName: "Penjualan",
-                    headers,
-                    rows,
-                    filename: `laporan-penjualan-${today}.xlsx`,
-                  });
-                }}
-              >
-                <FileText className="size-4" /> Excel Penjualan
-              </Button>
-              <Button
-                variant="glass"
-                size="default"
-                disabled={royalty.length === 0}
-                onClick={() => {
-                  const headers = ["Tanggal", "Tipe", "Tx Hash", "Amount", "Currency", "Status"];
-                  const rows = royalty.map((r) => [
-                    new Date(r.created_at).toLocaleString("id-ID"),
-                    r.tx_type,
-                    r.tx_hash,
-                    Number(r.amount),
-                    r.currency,
-                    r.status,
-                  ]);
-                  exportToPDF({
-                    title: "Laporan Royalti On-Chain",
-                    subtitle: `${royalty.length} transaksi blockchain`,
-                    headers,
-                    rows,
-                    filename: `laporan-royalti-${today}.pdf`,
-                  });
-                }}
-              >
-                <FileText className="size-4" /> PDF Royalti
-              </Button>
               <Link to="/mitra">
                 <Button variant="gold" size="default">
                   <Plus className="size-4" /> Input Penjualan
                 </Button>
               </Link>
+            </div>
+          </div>
+
+          {/* Period filter + export bar */}
+          <div className="mt-6 glass-card rounded-2xl p-4 md:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+                  <CalendarRange className="size-4 text-gold" />
+                  Periode Laporan
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(["today", "week", "month", "year", "all", "custom"] as Period[]).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPeriod(p)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                        period === p
+                          ? "border-gold bg-gold text-gold-foreground"
+                          : "border-border bg-background/40 text-muted-foreground hover:border-gold/40 hover:text-foreground"
+                      }`}
+                    >
+                      {periodLabel(p)}
+                    </button>
+                  ))}
+                </div>
+                {period === "custom" && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="date"
+                      value={customFrom}
+                      onChange={(e) => setCustomFrom(e.target.value)}
+                      className="rounded-md border border-border bg-background/40 px-3 py-1.5 text-xs"
+                    />
+                    <span className="text-xs text-muted-foreground">→</span>
+                    <input
+                      type="date"
+                      value={customTo}
+                      onChange={(e) => setCustomTo(e.target.value)}
+                      className="rounded-md border border-border bg-background/40 px-3 py-1.5 text-xs"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-4 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Penjualan: </span>
+                    <span className="font-semibold">{filteredSales.length} tx</span>
+                    <span className="text-muted-foreground"> • </span>
+                    <span className="font-semibold text-gold">{formatRupiah(periodOmzet)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Royalti: </span>
+                    <span className="font-semibold">{filteredRoyalty.length} tx</span>
+                    <span className="text-muted-foreground"> • </span>
+                    <span className="font-semibold text-gold">{periodRoyalty.toFixed(4)} MATIC</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-wrap">
+                <Button
+                  variant="glass"
+                  size="sm"
+                  disabled={filteredSales.length === 0}
+                  onClick={() => exportSales("pdf")}
+                >
+                  <FileText className="size-4" /> PDF Penjualan
+                </Button>
+                <Button
+                  variant="glass"
+                  size="sm"
+                  disabled={filteredSales.length === 0}
+                  onClick={() => exportSales("excel")}
+                >
+                  <FileSpreadsheet className="size-4" /> Excel Penjualan
+                </Button>
+                <Button
+                  variant="glass"
+                  size="sm"
+                  disabled={filteredRoyalty.length === 0}
+                  onClick={() => exportRoyalty("pdf")}
+                >
+                  <FileText className="size-4" /> PDF Royalti
+                </Button>
+                <Button
+                  variant="glass"
+                  size="sm"
+                  disabled={filteredRoyalty.length === 0}
+                  onClick={() => exportRoyalty("excel")}
+                >
+                  <FileSpreadsheet className="size-4" /> Excel Royalti
+                </Button>
+              </div>
             </div>
           </div>
 
