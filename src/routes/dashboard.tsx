@@ -112,6 +112,16 @@ function DashboardPage() {
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
 
+  // Royalty status filter
+  type RoyaltyStatus = "all" | "pending" | "verified" | "paid";
+  const [royaltyStatus, setRoyaltyStatus] = useState<RoyaltyStatus>("all");
+  const ROYALTY_STATUSES: { value: RoyaltyStatus; label: string; tone: string }[] = [
+    { value: "all", label: "Semua", tone: "bg-muted text-foreground" },
+    { value: "pending", label: "Pending", tone: "bg-warning/15 text-warning" },
+    { value: "verified", label: "Verified", tone: "bg-info/15 text-info" },
+    { value: "paid", label: "Paid", tone: "bg-success/15 text-success" },
+  ];
+
   const { fromDate, toDate } = useMemo(() => {
     const from = startOfPeriod(period, customFrom);
     const to = period === "custom" && customTo ? new Date(customTo + "T23:59:59") : new Date();
