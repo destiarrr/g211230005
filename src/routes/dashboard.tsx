@@ -323,6 +323,33 @@ function DashboardPage() {
                     />
                   </div>
                 )}
+                <div className="flex flex-col gap-1">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Status Royalti (untuk export)
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {ROYALTY_STATUSES.map((s) => {
+                      const count =
+                        s.value === "all"
+                          ? royalty.filter((r) => inRange(r.created_at)).length
+                          : royalty.filter((r) => inRange(r.created_at) && r.status === s.value).length;
+                      return (
+                        <button
+                          key={s.value}
+                          type="button"
+                          onClick={() => setRoyaltyStatus(s.value)}
+                          className={`rounded-full border px-2.5 py-1 text-[11px] font-medium capitalize transition ${
+                            royaltyStatus === s.value
+                              ? "border-gold bg-gold text-gold-foreground"
+                              : `border-border ${s.tone} hover:border-gold/40`
+                          }`}
+                        >
+                          {s.label} <span className="opacity-70">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-4 text-xs">
                   <div>
                     <span className="text-muted-foreground">Penjualan: </span>
@@ -331,7 +358,7 @@ function DashboardPage() {
                     <span className="font-semibold text-gold">{formatRupiah(periodOmzet)}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Royalti: </span>
+                    <span className="text-muted-foreground">Royalti ({royaltyStatus}): </span>
                     <span className="font-semibold">{filteredRoyalty.length} tx</span>
                     <span className="text-muted-foreground"> • </span>
                     <span className="font-semibold text-gold">{periodRoyalty.toFixed(4)} MATIC</span>
