@@ -600,23 +600,38 @@ function DashboardPage() {
                 {royalty.length === 0 && !loading && (
                   <p className="text-sm text-muted-foreground">Belum ada transaksi.</p>
                 )}
-                {royalty.slice(0, 6).map((t) => (
-                  <div
-                    key={t.id}
-                    className="flex items-center justify-between rounded-lg border border-border/50 bg-background/30 p-4"
-                  >
-                    <div>
-                      <div className="text-sm font-medium capitalize">{t.tx_type.replace("_", " ")}</div>
-                      <div className="font-mono text-xs text-muted-foreground">{t.tx_hash}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-gold">
-                        +{Number(t.amount).toFixed(4)} {t.currency}
+                {royalty.slice(0, 6).map((t) => {
+                  const tone =
+                    t.status === "paid"
+                      ? "bg-success/15 text-success border-success/30"
+                      : t.status === "verified"
+                        ? "bg-info/15 text-info border-info/30"
+                        : t.status === "pending"
+                          ? "bg-warning/15 text-warning border-warning/30"
+                          : "bg-muted text-muted-foreground border-border";
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between rounded-lg border border-border/50 bg-background/30 p-4"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium capitalize">{t.tx_type.replace("_", " ")}</div>
+                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase ${tone}`}>
+                            {t.status}
+                          </span>
+                        </div>
+                        <div className="font-mono text-xs text-muted-foreground truncate">{t.tx_hash}</div>
                       </div>
-                      <div className="text-xs text-muted-foreground">{timeAgo(t.created_at)} lalu</div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-gold">
+                          +{Number(t.amount).toFixed(4)} {t.currency}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{timeAgo(t.created_at)} lalu</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
