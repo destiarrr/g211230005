@@ -210,11 +210,12 @@ function DashboardPage() {
       .filter((r) => r.tx_type === "royalty")
       .reduce((a, r) => a + Number(r.amount), 0);
     rows.push(["", "", "", "", "TOTAL ROYALTI", Number(totalMatic.toFixed(4)), "MATIC"]);
-    const filename = `laporan-royalti-${period}-${today}`;
+    const statusLabel = royaltyStatus === "all" ? "Semua Status" : `Status: ${royaltyStatus}`;
+    const filename = `laporan-royalti-${royaltyStatus}-${period}-${today}`;
     if (kind === "pdf") {
       exportToPDF({
         title: "Laporan Royalti On-Chain",
-        subtitle: `${periodSubtitle} • ${filteredRoyalty.length} tx • ${totalMatic.toFixed(4)} MATIC`,
+        subtitle: `${periodSubtitle} • ${statusLabel} • ${filteredRoyalty.length} tx • ${totalMatic.toFixed(4)} MATIC`,
         headers, rows, filename: `${filename}.pdf`,
       });
     } else {
