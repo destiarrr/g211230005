@@ -38,6 +38,7 @@ const navItems = [
   { to: "/mitra", label: "Mitra" },
   { to: "/cabang", label: "Cabang" },
   { to: "/stok", label: "Stok" },
+  { to: "/payments", label: "Pembayaran" },
   { to: "/loyalty", label: "Loyalty" },
 ] as const;
 

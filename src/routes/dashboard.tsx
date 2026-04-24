@@ -35,8 +35,10 @@ import {
   fetchStock,
   fetchRoyaltyTx,
   formatRupiah,
+  formatRupiahFull,
   timeAgo,
 } from "@/lib/queries";
+import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -62,30 +64,6 @@ function DashboardPageGuarded() {
 
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 
-function exportToCSV(filename: string, rows: Array<Record<string, unknown>>) {
-  if (rows.length === 0) return;
-  const headers = Object.keys(rows[0]);
-  const csv = [
-    headers.join(","),
-    ...rows.map((r) =>
-      headers
-        .map((h) => {
-          const v = r[h];
-          if (v === null || v === undefined) return "";
-          const s = String(v).replace(/"/g, '""');
-          return /[",\n]/.test(s) ? `"${s}"` : s;
-        })
-        .join(","),
-    ),
-  ].join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 function DashboardPage() {
   const branchesQ = useQuery({ queryKey: ["branches"], queryFn: fetchBranches });
@@ -167,9 +145,78 @@ function DashboardPage() {
               <Button
                 variant="glass"
                 size="default"
-                onClick={() => exportToCSV(`sales-${today}.csv`, sales as unknown as Record<string, unknown>[])}
+                disabled={sales.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
+                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
+                  const rows = sales.map((s) => [
+                    s.sale_date,
+                    branchName(s.branch_id),
+                    s.product_name,
+                    s.quantity,
+                    Number(s.unit_price),
+                    Number(s.total_amount),
+                  ]);
+                  exportToPDF({
+                    title: "Laporan Penjualan",
+                    subtitle: `Total ${sales.length} transaksi • ${formatRupiahFull(sales.reduce((a, s) => a + Number(s.total_amount), 0))}`,
+                    headers,
+                    rows,
+                    filename: `laporan-penjualan-${today}.pdf`,
+                  });
+                }}
               >
-                <FileText className="size-4" /> Export CSV Penjualan
+                <FileText className="size-4" /> PDF Penjualan
+              </Button>
+              <Button
+                variant="glass"
+                size="default"
+                disabled={sales.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
+                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
+                  const rows = sales.map((s) => [
+                    s.sale_date,
+                    branchName(s.branch_id),
+                    s.product_name,
+                    s.quantity,
+                    Number(s.unit_price),
+                    Number(s.total_amount),
+                  ]);
+                  exportToExcel({
+                    sheetName: "Penjualan",
+                    headers,
+                    rows,
+                    filename: `laporan-penjualan-${today}.xlsx`,
+                  });
+                }}
+              >
+                <FileText className="size-4" /> Excel Penjualan
+              </Button>
+              <Button
+                variant="glass"
+                size="default"
+                disabled={royalty.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Tipe", "Tx Hash", "Amount", "Currency", "Status"];
+                  const rows = royalty.map((r) => [
+                    new Date(r.created_at).toLocaleString("id-ID"),
+                    r.tx_type,
+                    r.tx_hash,
+                    Number(r.amount),
+                    r.currency,
+                    r.status,
+                  ]);
+                  exportToPDF({
+                    title: "Laporan Royalti On-Chain",
+                    subtitle: `${royalty.length} transaksi blockchain`,
+                    headers,
+                    rows,
+                    filename: `laporan-royalti-${today}.pdf`,
+                  });
+                }}
+              >
+                <FileText className="size-4" /> PDF Royalti
               </Button>
               <Link to="/mitra">
                 <Button variant="gold" size="default">

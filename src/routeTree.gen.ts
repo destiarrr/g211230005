@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StokRouteImport } from './routes/stok'
+import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as MitraRouteImport } from './routes/mitra'
 import { Route as LoyaltyRouteImport } from './routes/loyalty'
 import { Route as InvestorRouteImport } from './routes/investor'
@@ -23,6 +24,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const StokRoute = StokRouteImport.update({
   id: '/stok',
   path: '/stok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MitraRoute = MitraRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/investor': typeof InvestorRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/payments': typeof PaymentsRoute
   '/stok': typeof StokRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/investor': typeof InvestorRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/payments': typeof PaymentsRoute
   '/stok': typeof StokRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/investor': typeof InvestorRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/payments': typeof PaymentsRoute
   '/stok': typeof StokRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/investor'
     | '/loyalty'
     | '/mitra'
+    | '/payments'
     | '/stok'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/investor'
     | '/loyalty'
     | '/mitra'
+    | '/payments'
     | '/stok'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/investor'
     | '/loyalty'
     | '/mitra'
+    | '/payments'
     | '/stok'
   fileRoutesById: FileRoutesById
 }
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   InvestorRoute: typeof InvestorRoute
   LoyaltyRoute: typeof LoyaltyRoute
   MitraRoute: typeof MitraRoute
+  PaymentsRoute: typeof PaymentsRoute
   StokRoute: typeof StokRoute
 }
 
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/stok'
       fullPath: '/stok'
       preLoaderRoute: typeof StokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mitra': {
@@ -245,8 +265,18 @@ const rootRouteChildren: RootRouteChildren = {
   InvestorRoute: InvestorRoute,
   LoyaltyRoute: LoyaltyRoute,
   MitraRoute: MitraRoute,
+  PaymentsRoute: PaymentsRoute,
   StokRoute: StokRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
