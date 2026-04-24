@@ -145,9 +145,78 @@ function DashboardPage() {
               <Button
                 variant="glass"
                 size="default"
-                onClick={() => exportToCSV(`sales-${today}.csv`, sales as unknown as Record<string, unknown>[])}
+                disabled={sales.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
+                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
+                  const rows = sales.map((s) => [
+                    s.sale_date,
+                    branchName(s.branch_id),
+                    s.product_name,
+                    s.quantity,
+                    Number(s.unit_price),
+                    Number(s.total_amount),
+                  ]);
+                  exportToPDF({
+                    title: "Laporan Penjualan",
+                    subtitle: `Total ${sales.length} transaksi • ${formatRupiahFull(sales.reduce((a, s) => a + Number(s.total_amount), 0))}`,
+                    headers,
+                    rows,
+                    filename: `laporan-penjualan-${today}.pdf`,
+                  });
+                }}
               >
-                <FileText className="size-4" /> Export CSV Penjualan
+                <FileText className="size-4" /> PDF Penjualan
+              </Button>
+              <Button
+                variant="glass"
+                size="default"
+                disabled={sales.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Cabang", "Produk", "Qty", "Harga", "Total"];
+                  const branchName = (id: string) => branches.find((b) => b.id === id)?.name ?? "-";
+                  const rows = sales.map((s) => [
+                    s.sale_date,
+                    branchName(s.branch_id),
+                    s.product_name,
+                    s.quantity,
+                    Number(s.unit_price),
+                    Number(s.total_amount),
+                  ]);
+                  exportToExcel({
+                    sheetName: "Penjualan",
+                    headers,
+                    rows,
+                    filename: `laporan-penjualan-${today}.xlsx`,
+                  });
+                }}
+              >
+                <FileText className="size-4" /> Excel Penjualan
+              </Button>
+              <Button
+                variant="glass"
+                size="default"
+                disabled={royalty.length === 0}
+                onClick={() => {
+                  const headers = ["Tanggal", "Tipe", "Tx Hash", "Amount", "Currency", "Status"];
+                  const rows = royalty.map((r) => [
+                    new Date(r.created_at).toLocaleString("id-ID"),
+                    r.tx_type,
+                    r.tx_hash,
+                    Number(r.amount),
+                    r.currency,
+                    r.status,
+                  ]);
+                  exportToPDF({
+                    title: "Laporan Royalti On-Chain",
+                    subtitle: `${royalty.length} transaksi blockchain`,
+                    headers,
+                    rows,
+                    filename: `laporan-royalti-${today}.pdf`,
+                  });
+                }}
+              >
+                <FileText className="size-4" /> PDF Royalti
               </Button>
               <Link to="/mitra">
                 <Button variant="gold" size="default">
