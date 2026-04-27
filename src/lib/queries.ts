@@ -115,6 +115,133 @@ export type Notification = {
   created_at: string;
 };
 
+export type Product = {
+  id: string;
+  name: string;
+  category: string | null;
+  default_price: number;
+  unit: string;
+  active: boolean;
+};
+
+export type Order = {
+  id: string;
+  user_id: string;
+  branch_id: string | null;
+  category: "offline" | "shopeefood" | "gofood";
+  total: number;
+  notes: string | null;
+  order_date: string;
+  created_at: string;
+};
+
+export type OrderItem = {
+  id: string;
+  order_id: string;
+  product_id: string | null;
+  product_name: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+};
+
+export type StockRecord = {
+  id: string;
+  branch_id: string | null;
+  record_date: string;
+  record_type: "pembukaan" | "penutupan";
+  product_id: string | null;
+  product_name: string;
+  quantity: number;
+  unit: string;
+  notes: string | null;
+  created_at: string;
+};
+
+export type ProductionRecord = {
+  id: string;
+  branch_id: string | null;
+  item_name: string;
+  price: number;
+  supplier: string | null;
+  place: string | null;
+  purchase_date: string;
+  notes: string | null;
+  created_at: string;
+};
+
+export type OperationalTool = {
+  id: string;
+  branch_id: string | null;
+  tool_name: string;
+  brand: string | null;
+  price: number;
+  purchase_place: string | null;
+  replace_period_months: number;
+  purchase_date: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export async function fetchProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("active", true)
+    .order("name");
+  if (error) throw error;
+  return (data ?? []) as Product[];
+}
+
+export async function fetchOrders(): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (error) throw error;
+  return (data ?? []) as Order[];
+}
+
+export async function fetchOrderItems(orderIds: string[]): Promise<OrderItem[]> {
+  if (orderIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("order_items")
+    .select("*")
+    .in("order_id", orderIds);
+  if (error) throw error;
+  return (data ?? []) as OrderItem[];
+}
+
+export async function fetchStockRecords(): Promise<StockRecord[]> {
+  const { data, error } = await supabase
+    .from("stock_records")
+    .select("*")
+    .order("record_date", { ascending: false })
+    .limit(500);
+  if (error) throw error;
+  return (data ?? []) as StockRecord[];
+}
+
+export async function fetchProductionRecords(): Promise<ProductionRecord[]> {
+  const { data, error } = await supabase
+    .from("production_records")
+    .select("*")
+    .order("purchase_date", { ascending: false })
+    .limit(500);
+  if (error) throw error;
+  return (data ?? []) as ProductionRecord[];
+}
+
+export async function fetchOperationalTools(): Promise<OperationalTool[]> {
+  const { data, error } = await supabase
+    .from("operational_tools")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as OperationalTool[];
+}
+
 export async function fetchBranches(): Promise<Branch[]> {
   const { data, error } = await supabase
     .from("branches")
