@@ -33,11 +33,12 @@ import { toast } from "sonner";
 
 const navItems = [
   { to: "/", label: "Beranda" },
-  { to: "/franchise", label: "Franchise" },
   { to: "/dashboard", label: "Dashboard" },
-  { to: "/mitra", label: "Mitra" },
-  { to: "/cabang", label: "Cabang" },
+  { to: "/kasir", label: "Kasir" },
   { to: "/stok", label: "Stok" },
+  { to: "/produksi", label: "Produksi" },
+  { to: "/operasional", label: "Operasional" },
+  { to: "/cabang", label: "Cabang" },
   { to: "/payments", label: "Pembayaran" },
   { to: "/loyalty", label: "Loyalty" },
 ] as const;
