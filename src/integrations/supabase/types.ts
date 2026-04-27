@@ -134,6 +134,148 @@ export type Database = {
         }
         Relationships: []
       }
+      operational_tools: {
+        Row: {
+          branch_id: string | null
+          brand: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          price: number
+          purchase_date: string | null
+          purchase_place: string | null
+          replace_period_months: number
+          tool_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branch_id?: string | null
+          brand?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          price?: number
+          purchase_date?: string | null
+          purchase_place?: string | null
+          replace_period_months?: number
+          tool_name: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          branch_id?: string | null
+          brand?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          price?: number
+          purchase_date?: string | null
+          purchase_place?: string | null
+          replace_period_months?: number
+          tool_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operational_tools_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          price: number
+          product_id: string | null
+          product_name: string
+          quantity: number
+          subtotal: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          price?: number
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          subtotal?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          price?: number
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          subtotal?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          branch_id: string | null
+          category: string
+          created_at: string
+          id: string
+          notes: string | null
+          order_date: string
+          total: number
+          user_id: string
+        }
+        Insert: {
+          branch_id?: string | null
+          category: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_date?: string
+          total?: number
+          user_id?: string
+        }
+        Update: {
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_date?: string
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_proofs: {
         Row: {
           amount: number
@@ -186,6 +328,89 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      production_records: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          id: string
+          item_name: string
+          notes: string | null
+          place: string | null
+          price: number
+          purchase_date: string
+          supplier: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          place?: string | null
+          price?: number
+          purchase_date?: string
+          supplier?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          place?: string | null
+          price?: number
+          purchase_date?: string
+          supplier?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_records_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean
+          category: string | null
+          created_at: string
+          default_price: number
+          id: string
+          name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          default_price?: number
+          id?: string
+          name: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          default_price?: number
+          id?: string
+          name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -404,6 +629,63 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_records: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string | null
+          product_name: string
+          quantity: number
+          record_date: string
+          record_type: string
+          unit: string
+          user_id: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          record_date?: string
+          record_type: string
+          unit?: string
+          user_id?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          record_date?: string
+          record_type?: string
+          unit?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_records_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_records_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
