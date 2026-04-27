@@ -13,6 +13,7 @@ import { Route as StokRouteImport } from './routes/stok'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as MitraRouteImport } from './routes/mitra'
 import { Route as LoyaltyRouteImport } from './routes/loyalty'
+import { Route as KasirRouteImport } from './routes/kasir'
 import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as FranchiseRouteImport } from './routes/franchise'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -39,6 +40,11 @@ const MitraRoute = MitraRouteImport.update({
 const LoyaltyRoute = LoyaltyRouteImport.update({
   id: '/loyalty',
   path: '/loyalty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KasirRoute = KasirRouteImport.update({
+  id: '/kasir',
+  path: '/kasir',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvestorRoute = InvestorRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
   '/payments': typeof PaymentsRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
   '/payments': typeof PaymentsRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
   '/payments': typeof PaymentsRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
     | '/payments'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
     | '/payments'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
     | '/payments'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FranchiseRoute: typeof FranchiseRoute
   InvestorRoute: typeof InvestorRoute
+  KasirRoute: typeof KasirRoute
   LoyaltyRoute: typeof LoyaltyRoute
   MitraRoute: typeof MitraRoute
   PaymentsRoute: typeof PaymentsRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/loyalty'
       fullPath: '/loyalty'
       preLoaderRoute: typeof LoyaltyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kasir': {
+      id: '/kasir'
+      path: '/kasir'
+      fullPath: '/kasir'
+      preLoaderRoute: typeof KasirRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/investor': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FranchiseRoute: FranchiseRoute,
   InvestorRoute: InvestorRoute,
+  KasirRoute: KasirRoute,
   LoyaltyRoute: LoyaltyRoute,
   MitraRoute: MitraRoute,
   PaymentsRoute: PaymentsRoute,
