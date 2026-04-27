@@ -10,9 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StokRouteImport } from './routes/stok'
+import { Route as ProduksiRouteImport } from './routes/produksi'
 import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as OperasionalRouteImport } from './routes/operasional'
 import { Route as MitraRouteImport } from './routes/mitra'
 import { Route as LoyaltyRouteImport } from './routes/loyalty'
+import { Route as KasirRouteImport } from './routes/kasir'
 import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as FranchiseRouteImport } from './routes/franchise'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -26,9 +29,19 @@ const StokRoute = StokRouteImport.update({
   path: '/stok',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProduksiRoute = ProduksiRouteImport.update({
+  id: '/produksi',
+  path: '/produksi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaymentsRoute = PaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OperasionalRoute = OperasionalRouteImport.update({
+  id: '/operasional',
+  path: '/operasional',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MitraRoute = MitraRouteImport.update({
@@ -39,6 +52,11 @@ const MitraRoute = MitraRouteImport.update({
 const LoyaltyRoute = LoyaltyRouteImport.update({
   id: '/loyalty',
   path: '/loyalty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KasirRoute = KasirRouteImport.update({
+  id: '/kasir',
+  path: '/kasir',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvestorRoute = InvestorRouteImport.update({
@@ -85,9 +103,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/operasional': typeof OperasionalRoute
   '/payments': typeof PaymentsRoute
+  '/produksi': typeof ProduksiRoute
   '/stok': typeof StokRoute
 }
 export interface FileRoutesByTo {
@@ -98,9 +119,12 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/operasional': typeof OperasionalRoute
   '/payments': typeof PaymentsRoute
+  '/produksi': typeof ProduksiRoute
   '/stok': typeof StokRoute
 }
 export interface FileRoutesById {
@@ -112,9 +136,12 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/franchise': typeof FranchiseRoute
   '/investor': typeof InvestorRoute
+  '/kasir': typeof KasirRoute
   '/loyalty': typeof LoyaltyRoute
   '/mitra': typeof MitraRoute
+  '/operasional': typeof OperasionalRoute
   '/payments': typeof PaymentsRoute
+  '/produksi': typeof ProduksiRoute
   '/stok': typeof StokRoute
 }
 export interface FileRouteTypes {
@@ -127,9 +154,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
+    | '/operasional'
     | '/payments'
+    | '/produksi'
     | '/stok'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -140,9 +170,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
+    | '/operasional'
     | '/payments'
+    | '/produksi'
     | '/stok'
   id:
     | '__root__'
@@ -153,9 +186,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/franchise'
     | '/investor'
+    | '/kasir'
     | '/loyalty'
     | '/mitra'
+    | '/operasional'
     | '/payments'
+    | '/produksi'
     | '/stok'
   fileRoutesById: FileRoutesById
 }
@@ -167,9 +203,12 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FranchiseRoute: typeof FranchiseRoute
   InvestorRoute: typeof InvestorRoute
+  KasirRoute: typeof KasirRoute
   LoyaltyRoute: typeof LoyaltyRoute
   MitraRoute: typeof MitraRoute
+  OperasionalRoute: typeof OperasionalRoute
   PaymentsRoute: typeof PaymentsRoute
+  ProduksiRoute: typeof ProduksiRoute
   StokRoute: typeof StokRoute
 }
 
@@ -182,11 +221,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StokRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produksi': {
+      id: '/produksi'
+      path: '/produksi'
+      fullPath: '/produksi'
+      preLoaderRoute: typeof ProduksiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/payments': {
       id: '/payments'
       path: '/payments'
       fullPath: '/payments'
       preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/operasional': {
+      id: '/operasional'
+      path: '/operasional'
+      fullPath: '/operasional'
+      preLoaderRoute: typeof OperasionalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mitra': {
@@ -201,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/loyalty'
       fullPath: '/loyalty'
       preLoaderRoute: typeof LoyaltyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kasir': {
+      id: '/kasir'
+      path: '/kasir'
+      fullPath: '/kasir'
+      preLoaderRoute: typeof KasirRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/investor': {
@@ -263,9 +323,12 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FranchiseRoute: FranchiseRoute,
   InvestorRoute: InvestorRoute,
+  KasirRoute: KasirRoute,
   LoyaltyRoute: LoyaltyRoute,
   MitraRoute: MitraRoute,
+  OperasionalRoute: OperasionalRoute,
   PaymentsRoute: PaymentsRoute,
+  ProduksiRoute: ProduksiRoute,
   StokRoute: StokRoute,
 }
 export const routeTree = rootRouteImport
